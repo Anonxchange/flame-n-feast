@@ -57,13 +57,13 @@ export function CartSidebar({
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {items.map((item) => (
                   <div key={item.id} className="flex items-center space-x-3 p-3 bg-card rounded-lg">
-                    {item.type === 'gift_card' ? (
-                      <div className="w-16 h-16 gradient-gold rounded-md flex items-center justify-center">
-                        <Gift className="w-8 h-8 text-accent-foreground" />
+                    {item.isGiftCard ? (
+                      <div className="w-16 h-16 flex items-center justify-center bg-gradient-to-br from-gold to-amber-400 rounded-md">
+                        <Gift className="w-8 h-8 text-white" />
                       </div>
                     ) : (
                       <img
-                        src={(item as CartItem).image}
+                        src={item.image}
                         alt={item.name}
                         className="w-16 h-16 object-cover rounded-md"
                       />
@@ -71,29 +71,33 @@ export function CartSidebar({
                     <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-sm truncate">{item.name}</h4>
                       <p className="text-primary font-bebas text-lg">
-                        {item.type === 'gift_card' 
-                          ? formatPrice((item as GiftCardCartItem).amount)
-                          : formatPrice((item as CartItem).price)
-                        }
+                        {formatPrice(item.price)}
                       </p>
                       <div className="flex items-center space-x-2 mt-2">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
-                        >
-                          <Minus className="w-3 h-3" />
-                        </Button>
-                        <span className="w-8 text-center font-medium">{item.quantity}</span>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8"
-                          onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                        >
-                          <Plus className="w-3 h-3" />
-                        </Button>
+                        {!item.isGiftCard && (
+                          <>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                            >
+                              <Minus className="w-3 h-3" />
+                            </Button>
+                            <span className="w-8 text-center font-medium">{item.quantity}</span>
+                            <Button
+                              variant="outline"
+                              size="icon"
+                              className="h-8 w-8"
+                              onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                            >
+                              <Plus className="w-3 h-3" />
+                            </Button>
+                          </>
+                        )}
+                        {item.isGiftCard && (
+                          <span className="text-sm text-muted-foreground">Qty: {item.quantity}</span>
+                        )}
                         <Button
                           variant="ghost"
                           size="icon"

@@ -9,21 +9,28 @@ export interface MenuItem {
   category: string;
 }
 
-export interface GiftCardItem {
+export interface GiftCard {
   id: string;
-  name: string;
   amount: number;
-  type: 'gift_card';
+  customAmount?: number;
 }
 
 export interface CartItem extends MenuItem {
   quantity: number;
-  type?: 'food';
+  isGiftCard?: boolean;
 }
 
-export interface GiftCardCartItem extends GiftCardItem {
+export interface GiftCardCartItem {
+  id: string;
+  amount: number;
+  customAmount?: number;
   quantity: number;
-  type: 'gift_card';
+  isGiftCard: true;
+  name: string;
+  description: string;
+  price: number;
+  image: string;
+  category: string;
 }
 
 export function useCart() {
@@ -31,37 +38,33 @@ export function useCart() {
 
   const addItem = useCallback((item: MenuItem, quantity: number = 1) => {
     setItems(prev => {
-      const existingItem = prev.find(cartItem => cartItem.id === item.id);
+      const existingItem = prev.find(cartItem => cartItem.id === item.id && !cartItem.isGiftCard);
       if (existingItem) {
         return prev.map(cartItem =>
-          cartItem.id === item.id
+          cartItem.id === item.id && !cartItem.isGiftCard
             ? { ...cartItem, quantity: cartItem.quantity + quantity }
             : cartItem
         );
       }
-      return [...prev, { ...item, quantity, type: 'food' as const }];
+      return [...prev, { ...item, quantity }];
     });
   }, []);
 
-  const addGiftCard = useCallback((amount: number, quantity: number = 1) => {
-    const giftCardId = `gift-card-${amount}`;
+  const addGiftCard = useCallback((giftCard: GiftCard, quantity: number = 1) => {
+    const giftCardItem: GiftCardCartItem = {
+      ...giftCard,
+      quantity,
+      isGiftCard: true,
+      name: `Gift Card - ₦${giftCard.amount.toLocaleString()}`,
+      description: 'Digital gift card for Sizzling Grills',
+      price: giftCard.amount,
+      image: '/placeholder.svg',
+      category: 'gift-card'
+    };
+
     setItems(prev => {
-      const existingItem = prev.find(cartItem => cartItem.id === giftCardId);
-      if (existingItem) {
-        return prev.map(cartItem =>
-          cartItem.id === giftCardId
-            ? { ...cartItem, quantity: cartItem.quantity + quantity }
-            : cartItem
-        );
-      }
-      const giftCard: GiftCardCartItem = {
-        id: giftCardId,
-        name: `₦${amount.toLocaleString()} Gift Card`,
-        amount,
-        quantity,
-        type: 'gift_card'
-      };
-      return [...prev, giftCard];
+      // Gift cards are always unique (no combining)
+      return [...prev, giftCardItem];
     });
   }, []);
 
@@ -86,10 +89,7 @@ export function useCart() {
   }, []);
 
   const getTotalPrice = useCallback(() => {
-    return items.reduce((total, item) => {
-      const itemPrice = item.type === 'gift_card' ? (item as GiftCardCartItem).amount : (item as CartItem).price;
-      return total + (itemPrice * item.quantity);
-    }, 0);
+    return items.reduce((total, item) => total + (item.price * item.quantity), 0);
   }, [items]);
 
   const getTotalItems = useCallback(() => {

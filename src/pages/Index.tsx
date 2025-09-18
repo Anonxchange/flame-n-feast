@@ -38,7 +38,11 @@ const Index = () => {
   };
 
   const handleAddGiftCard = (amount: number) => {
-    addGiftCard(amount);
+    const giftCard = {
+      id: `gift-${Date.now()}`,
+      amount
+    };
+    addGiftCard(giftCard);
     toast({
       title: "Gift card added!",
       description: `₦${amount.toLocaleString()} gift card has been added to your cart.`,
