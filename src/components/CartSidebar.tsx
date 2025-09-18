@@ -1,12 +1,12 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ShoppingCart, Plus, Minus, Trash2 } from 'lucide-react';
-import { CartItem } from '@/hooks/useCart';
+import { ShoppingCart, Plus, Minus, Trash2, Gift } from 'lucide-react';
+import { CartItem, GiftCardCartItem } from '@/hooks/useCart';
 import { Separator } from '@/components/ui/separator';
 
 interface CartSidebarProps {
-  items: CartItem[];
+  items: (CartItem | GiftCardCartItem)[];
   totalPrice: number;
   totalItems: number;
   onUpdateQuantity: (id: string, quantity: number) => void;
@@ -57,15 +57,24 @@ export function CartSidebar({
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {items.map((item) => (
                   <div key={item.id} className="flex items-center space-x-3 p-3 bg-card rounded-lg">
-                    <img
-                      src={item.image}
-                      alt={item.name}
-                      className="w-16 h-16 object-cover rounded-md"
-                    />
+                    {item.type === 'gift_card' ? (
+                      <div className="w-16 h-16 gradient-gold rounded-md flex items-center justify-center">
+                        <Gift className="w-8 h-8 text-accent-foreground" />
+                      </div>
+                    ) : (
+                      <img
+                        src={(item as CartItem).image}
+                        alt={item.name}
+                        className="w-16 h-16 object-cover rounded-md"
+                      />
+                    )}
                     <div className="flex-1 min-w-0">
                       <h4 className="font-semibold text-sm truncate">{item.name}</h4>
                       <p className="text-primary font-bebas text-lg">
-                        {formatPrice(item.price)}
+                        {item.type === 'gift_card' 
+                          ? formatPrice((item as GiftCardCartItem).amount)
+                          : formatPrice((item as CartItem).price)
+                        }
                       </p>
                       <div className="flex items-center space-x-2 mt-2">
                         <Button

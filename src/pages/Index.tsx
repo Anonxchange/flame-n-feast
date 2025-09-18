@@ -4,6 +4,7 @@ import { Badge } from '@/components/ui/badge';
 import { Flame, Star, Clock, Shield } from 'lucide-react';
 import { Header } from '@/components/Header';
 import { MenuCard } from '@/components/MenuCard';
+import { GiftCardSection } from '@/components/GiftCardSection';
 import { useCart } from '@/hooks/useCart';
 import { menuItems } from '@/data/menuItems';
 import { toast } from '@/hooks/use-toast';
@@ -13,6 +14,7 @@ const Index = () => {
   const {
     items,
     addItem,
+    addGiftCard,
     removeItem,
     updateQuantity,
     getTotalPrice,
@@ -32,6 +34,14 @@ const Index = () => {
     toast({
       title: "Added to cart!",
       description: `${item.name} has been added to your cart.`,
+    });
+  };
+
+  const handleAddGiftCard = (amount: number) => {
+    addGiftCard(amount);
+    toast({
+      title: "Gift card added!",
+      description: `₦${amount.toLocaleString()} gift card has been added to your cart.`,
     });
   };
 
@@ -150,6 +160,8 @@ const Index = () => {
           </div>
         </div>
       </section>
+
+      <GiftCardSection onAddToCart={handleAddGiftCard} />
 
       {/* Footer */}
       <footer className="gradient-smoke py-12 border-t border-border/50">

@@ -1,10 +1,10 @@
 import { Button } from '@/components/ui/button';
 import { Flame, User, Wallet } from 'lucide-react';
 import { CartSidebar } from './CartSidebar';
-import { CartItem } from '@/hooks/useCart';
+import { CartItem, GiftCardCartItem } from '@/hooks/useCart';
 
 interface HeaderProps {
-  cartItems: CartItem[];
+  cartItems: (CartItem | GiftCardCartItem)[];
   totalPrice: number;
   totalItems: number;
   onUpdateQuantity: (id: string, quantity: number) => void;

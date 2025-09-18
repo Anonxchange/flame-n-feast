@@ -9,12 +9,25 @@ export interface MenuItem {
   category: string;
 }
 
+export interface GiftCardItem {
+  id: string;
+  name: string;
+  amount: number;
+  type: 'gift_card';
+}
+
 export interface CartItem extends MenuItem {
   quantity: number;
+  type?: 'food';
+}
+
+export interface GiftCardCartItem extends GiftCardItem {
+  quantity: number;
+  type: 'gift_card';
 }
 
 export function useCart() {
-  const [items, setItems] = useState<CartItem[]>([]);
+  const [items, setItems] = useState<(CartItem | GiftCardCartItem)[]>([]);
 
   const addItem = useCallback((item: MenuItem, quantity: number = 1) => {
     setItems(prev => {
@@ -26,7 +39,29 @@ export function useCart() {
             : cartItem
         );
       }
-      return [...prev, { ...item, quantity }];
+      return [...prev, { ...item, quantity, type: 'food' as const }];
+    });
+  }, []);
+
+  const addGiftCard = useCallback((amount: number, quantity: number = 1) => {
+    const giftCardId = `gift-card-${amount}`;
+    setItems(prev => {
+      const existingItem = prev.find(cartItem => cartItem.id === giftCardId);
+      if (existingItem) {
+        return prev.map(cartItem =>
+          cartItem.id === giftCardId
+            ? { ...cartItem, quantity: cartItem.quantity + quantity }
+            : cartItem
+        );
+      }
+      const giftCard: GiftCardCartItem = {
+        id: giftCardId,
+        name: `₦${amount.toLocaleString()} Gift Card`,
+        amount,
+        quantity,
+        type: 'gift_card'
+      };
+      return [...prev, giftCard];
     });
   }, []);
 
@@ -51,7 +86,10 @@ export function useCart() {
   }, []);
 
   const getTotalPrice = useCallback(() => {
-    return items.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return items.reduce((total, item) => {
+      const itemPrice = item.type === 'gift_card' ? (item as GiftCardCartItem).amount : (item as CartItem).price;
+      return total + (itemPrice * item.quantity);
+    }, 0);
   }, [items]);
 
   const getTotalItems = useCallback(() => {
@@ -61,6 +99,7 @@ export function useCart() {
   return {
     items,
     addItem,
+    addGiftCard,
     removeItem,
     updateQuantity,
     clearCart,
