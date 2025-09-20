@@ -1,16 +1,20 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Flame, Star, Clock, Shield } from 'lucide-react';
+import { Flame, Star, Clock, Shield, User, LogOut } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { MenuCard } from '@/components/MenuCard';
 import { GiftCardSection } from '@/components/GiftCardSection';
 import { useCart } from '@/hooks/useCart';
+import { useAuth } from '@/hooks/useAuth';
 import { menuItems } from '@/data/menuItems';
 import { toast } from '@/hooks/use-toast';
 import heroBbq from '@/assets/hero-bbq.jpg';
 
 const Index = () => {
+  const navigate = useNavigate();
+  const { user, loading, signOut } = useAuth();
   const {
     items,
     addItem,
@@ -22,6 +26,13 @@ const Index = () => {
   } = useCart();
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+
+  useEffect(() => {
+    // Redirect to auth if not logged in
+    if (!loading && !user) {
+      navigate('/auth');
+    }
+  }, [user, loading, navigate]);
 
   const categories = ['All', ...Array.from(new Set(menuItems.map(item => item.category)))];
   
@@ -52,9 +63,32 @@ const Index = () => {
   const handleCheckout = () => {
     toast({
       title: "Checkout",
-      description: "Connect to Supabase to enable full checkout functionality with payments and user accounts.",
+      description: "Proceeding to checkout with your selected items.",
     });
   };
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast({
+      title: "Signed out",
+      description: "You have been successfully signed out.",
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="flex items-center space-x-3">
+          <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+          <span className="text-lg">Loading...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null; // Will redirect to auth
+  }
 
   return (
     <div className="min-h-screen bg-background">

@@ -1,7 +1,9 @@
 import { Button } from '@/components/ui/button';
-import { Flame, User, Wallet } from 'lucide-react';
+import { Flame, User, Wallet, LogOut } from 'lucide-react';
 import { CartSidebar } from './CartSidebar';
 import { CartItem, GiftCardCartItem } from '@/hooks/useCart';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from '@/hooks/use-toast';
 
 interface HeaderProps {
   cartItems: (CartItem | GiftCardCartItem)[];
@@ -20,6 +22,15 @@ export function Header({
   onRemoveItem,
   onCheckout,
 }: HeaderProps) {
+  const { user, signOut } = useAuth();
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast({
+      title: "Signed out",
+      description: "You have been successfully signed out.",
+    });
+  };
   return (
     <header className="sticky top-0 z-50 gradient-smoke border-b border-border/50 backdrop-blur-sm">
       <div className="container mx-auto px-4 py-4">
@@ -52,9 +63,29 @@ export function Header({
             <Button variant="ghost" size="icon" className="hidden sm:flex">
               <Wallet className="w-5 h-5" />
             </Button>
-            <Button variant="smoke" size="icon">
-              <User className="w-5 h-5" />
-            </Button>
+            
+            {/* User Info and Sign Out */}
+            {user && (
+              <div className="hidden sm:flex items-center space-x-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground hover:text-accent"
+                >
+                  <User className="w-4 h-4 mr-2" />
+                  <span className="text-sm">{user.email}</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleSignOut}
+                  className="text-muted-foreground hover:text-accent"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </div>
+            )}
+            
             <CartSidebar
               items={cartItems}
               totalPrice={totalPrice}
