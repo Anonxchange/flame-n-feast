@@ -19,11 +19,11 @@ export type Database = {
           amount: number
           balance: number
           code: string
-          created_at: string
+          created_at: string | null
           created_by: string | null
           expires_at: string | null
           id: string
-          is_active: boolean
+          is_active: boolean | null
           redeemed_at: string | null
           redeemed_by: string | null
         }
@@ -31,11 +31,11 @@ export type Database = {
           amount: number
           balance: number
           code: string
-          created_at?: string
+          created_at?: string | null
           created_by?: string | null
           expires_at?: string | null
           id?: string
-          is_active?: boolean
+          is_active?: boolean | null
           redeemed_at?: string | null
           redeemed_by?: string | null
         }
@@ -43,11 +43,11 @@ export type Database = {
           amount?: number
           balance?: number
           code?: string
-          created_at?: string
+          created_at?: string | null
           created_by?: string | null
           expires_at?: string | null
           id?: string
-          is_active?: boolean
+          is_active?: boolean | null
           redeemed_at?: string | null
           redeemed_by?: string | null
         }
@@ -55,39 +55,39 @@ export type Database = {
       }
       orders: {
         Row: {
-          created_at: string
+          created_at: string | null
           customer_info: Json | null
           id: string
           items: Json
           order_type: string
           payment_method: string
-          payment_status: string
+          payment_status: string | null
           total_amount: number
-          updated_at: string
+          updated_at: string | null
           user_id: string | null
         }
         Insert: {
-          created_at?: string
+          created_at?: string | null
           customer_info?: Json | null
           id?: string
           items: Json
           order_type: string
           payment_method: string
-          payment_status?: string
+          payment_status?: string | null
           total_amount: number
-          updated_at?: string
+          updated_at?: string | null
           user_id?: string | null
         }
         Update: {
-          created_at?: string
+          created_at?: string | null
           customer_info?: Json | null
           id?: string
           items?: Json
           order_type?: string
           payment_method?: string
-          payment_status?: string
+          payment_status?: string | null
           total_amount?: number
-          updated_at?: string
+          updated_at?: string | null
           user_id?: string | null
         }
         Relationships: []
@@ -95,7 +95,7 @@ export type Database = {
       wallet_transactions: {
         Row: {
           amount: number
-          created_at: string
+          created_at: string | null
           description: string | null
           id: string
           reference_id: string | null
@@ -106,7 +106,7 @@ export type Database = {
         }
         Insert: {
           amount: number
-          created_at?: string
+          created_at?: string | null
           description?: string | null
           id?: string
           reference_id?: string | null
@@ -117,7 +117,7 @@ export type Database = {
         }
         Update: {
           amount?: number
-          created_at?: string
+          created_at?: string | null
           description?: string | null
           id?: string
           reference_id?: string | null
@@ -138,24 +138,24 @@ export type Database = {
       }
       wallets: {
         Row: {
-          balance: number
-          created_at: string
+          balance: number | null
+          created_at: string | null
           id: string
-          updated_at: string
+          updated_at: string | null
           user_id: string
         }
         Insert: {
-          balance?: number
-          created_at?: string
+          balance?: number | null
+          created_at?: string | null
           id?: string
-          updated_at?: string
+          updated_at?: string | null
           user_id: string
         }
         Update: {
-          balance?: number
-          created_at?: string
+          balance?: number | null
+          created_at?: string | null
           id?: string
-          updated_at?: string
+          updated_at?: string | null
           user_id?: string
         }
         Relationships: []
