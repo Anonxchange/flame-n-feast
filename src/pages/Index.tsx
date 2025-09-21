@@ -5,7 +5,7 @@ import { Flame, Star, Clock, Shield, User, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { MenuCard } from '@/components/MenuCard';
-import { GiftCardSection } from '@/components/GiftCardSection';
+import { GiftCardPurchase } from '@/components/GiftCardPurchase';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { menuItems } from '@/data/menuItems';
@@ -48,16 +48,9 @@ const Index = () => {
     });
   };
 
-  const handleAddGiftCard = (amount: number) => {
-    const giftCard = {
-      id: `gift-${Date.now()}`,
-      amount
-    };
+  const handleAddGiftCard = (giftCard: any) => {
     addGiftCard(giftCard);
-    toast({
-      title: "Gift card added!",
-      description: `₦${amount.toLocaleString()} gift card has been added to your cart.`,
-    });
+    // Toast is already handled in GiftCardPurchase component
   };
 
   const handleCheckout = () => {
@@ -199,7 +192,17 @@ const Index = () => {
         </div>
       </section>
 
-      <GiftCardSection onAddToCart={handleAddGiftCard} />
+      <section className="py-16 bg-card/30">
+        <div className="container mx-auto px-4 max-w-2xl">
+          <div className="text-center mb-12">
+            <h2 className="font-bebas text-4xl md:text-5xl text-accent mb-4">GIFT CARDS</h2>
+            <p className="text-muted-foreground text-lg">
+              Perfect for friends and family who love great grilled food
+            </p>
+          </div>
+          <GiftCardPurchase onAddToCart={handleAddGiftCard} />
+        </div>
+      </section>
 
       {/* Footer */}
       <footer className="gradient-smoke py-12 border-t border-border/50">
