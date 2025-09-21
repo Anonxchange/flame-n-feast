@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/Header';
 import { MenuCard } from '@/components/MenuCard';
 import { GiftCardPurchase } from '@/components/GiftCardPurchase';
+import { CheckoutModal } from '@/components/CheckoutModal';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { menuItems } from '@/data/menuItems';
@@ -21,11 +22,13 @@ const Index = () => {
     addGiftCard,
     removeItem,
     updateQuantity,
+    clearCart,
     getTotalPrice,
     getTotalItems,
   } = useCart();
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [checkoutModalOpen, setCheckoutModalOpen] = useState(false);
 
   useEffect(() => {
     // Redirect to auth if not logged in
@@ -54,9 +57,23 @@ const Index = () => {
   };
 
   const handleCheckout = () => {
+    if (getTotalItems() === 0) {
+      toast({
+        title: "Empty Cart",
+        description: "Please add items to your cart before checking out.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setCheckoutModalOpen(true);
+  };
+
+  const handleCheckoutSuccess = () => {
+    clearCart();
+    setCheckoutModalOpen(false);
     toast({
-      title: "Checkout",
-      description: "Proceeding to checkout with your selected items.",
+      title: "Order Completed!",
+      description: "Your order has been processed successfully.",
     });
   };
 
@@ -92,6 +109,14 @@ const Index = () => {
         onUpdateQuantity={updateQuantity}
         onRemoveItem={removeItem}
         onCheckout={handleCheckout}
+      />
+
+      <CheckoutModal
+        isOpen={checkoutModalOpen}
+        onClose={() => setCheckoutModalOpen(false)}
+        items={items}
+        totalPrice={getTotalPrice()}
+        onSuccess={handleCheckoutSuccess}
       />
 
       {/* Hero Section */}

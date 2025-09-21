@@ -165,7 +165,31 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      create_gift_card: {
+        Args: {
+          p_amount: number
+          p_created_by?: string
+          p_expires_in_months?: number
+        }
+        Returns: {
+          amount: number
+          expires_at: string
+          gift_card_code: string
+          gift_card_id: string
+        }[]
+      }
+      generate_gift_card_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      redeem_gift_card: {
+        Args: { p_amount: number; p_code: string; p_redeemed_by?: string }
+        Returns: {
+          message: string
+          remaining_balance: number
+          success: boolean
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
