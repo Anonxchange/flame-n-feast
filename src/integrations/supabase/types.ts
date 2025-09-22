@@ -183,7 +183,9 @@ export type Database = {
         Returns: string
       }
       redeem_gift_card: {
-        Args: { p_amount: number; p_code: string; p_redeemed_by?: string }
+        Args:
+          | { p_amount: number; p_code: string; p_redeemed_by?: string }
+          | { p_amount: number; p_code: string; p_redeemed_by?: string }
         Returns: {
           message: string
           remaining_balance: number
