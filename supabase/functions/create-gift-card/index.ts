@@ -36,14 +36,16 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    // Get the authorization header
+    // Get the authorization header (for user context)
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {
       throw new Error('No authorization header');
     }
 
-    // Set the auth header for RLS
-    supabaseClient.auth.setAuth(authHeader.replace('Bearer ', ''));
+    // Extract user ID from JWT for RLS context
+    const token = authHeader.replace('Bearer ', '');
+    const payload = JSON.parse(atob(token.split('.')[1]));
+    const userId = payload.sub;
 
     const { amount, expiresInMonths = 12 }: CreateGiftCardRequest = await req.json();
 
